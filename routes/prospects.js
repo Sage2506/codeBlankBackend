@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const prospects = require('../services/prospects');
 
-/* GET prospects. */
 router.get('/', async function(req, res, next) {
   try {
     res.json(await prospects.get(req.query.page));
@@ -12,7 +11,6 @@ router.get('/', async function(req, res, next) {
   }
 });
 
-/* POST prospect */
 router.post('/', async function(req, res, next) {
   try {
     res.json(await prospects.create(req.body));
@@ -22,7 +20,6 @@ router.post('/', async function(req, res, next) {
   }
 });
 
-/* PUT prospect */
 router.put('/:id', async function(req, res, next) {
   try {
     res.json(await prospects.update(req.params.id, req.body));

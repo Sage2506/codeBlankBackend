@@ -16,8 +16,14 @@ async function get(page = 1) {
     rfc
     FROM prospects LIMIT ${offset},${config.listPerPage}`
   );
+  const count = await db.query(`SELECT Count(*) as total FROM prospects;`);
+
   const data = helper.emptyOrRows(rows);
-  const meta = { page };
+  const meta = {
+    currentPage: parseInt(page),
+    count : count[0].total,
+    pages: Math.ceil(count[0].total / config.listPerPage)
+  };
 
   return {
     data,
@@ -70,7 +76,7 @@ async function update(id, prospect){
   let message = 'Error in updating prospect';
 
   if (result.affectedRows) {
-    message = 'prospect updated successfully';
+    return {data :prospect}
   }
 
   return {message};
