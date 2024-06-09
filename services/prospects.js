@@ -13,7 +13,9 @@ async function get(page = 1) {
     neighborhood,
     zip_code,
     phone_number,
-    rfc
+    rfc,
+    attachment,
+    attachment_name
     FROM prospects LIMIT ${offset},${config.listPerPage}`
   );
   const count = await db.query(`SELECT Count(*) as total FROM prospects;`);
@@ -32,9 +34,10 @@ async function get(page = 1) {
 }
 
 async function create(prospect){
+
   const result = await db.query(
     `INSERT INTO prospects
-    (name, middle_name, last_name, street, ext_number, neighborhood, zip_code, phone_number, rfc)
+    (name, middle_name, last_name, street, ext_number, neighborhood, zip_code, phone_number, rfc, attachment, attachment_name)
     VALUES
     (
     "${prospect.name.toLowerCase()}",
@@ -45,14 +48,18 @@ async function create(prospect){
     "${prospect.neighborhood.toLowerCase()}",
     "${prospect.zip_code.toLowerCase()}",
     "${prospect.phone_number.toLowerCase()}",
-    "${prospect.rfc.toLowerCase()}"
+    "${prospect.rfc.toLowerCase()}",
+    "${prospect.attachment}",
+    "${prospect.attachment_name}"
     );`
   );
 
-  let message = 'Error in creating prospect';
+
+  console.log("data id: ",result);
+  message = 'Error in creating prospect';
 
   if (result.affectedRows) {
-    message = 'Prospect created successfully';
+    return {data : {...prospect, id: result.insertId}}
   }
 
   return {message};
@@ -76,7 +83,7 @@ async function update(id, prospect){
   let message = 'Error in updating prospect';
 
   if (result.affectedRows) {
-    return {data :prospect}
+    return {data: prospect}
   }
 
   return {message};
