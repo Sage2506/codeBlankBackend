@@ -48,7 +48,7 @@ async function get(page = 1) {
 async function create(prospect){
   const result = await db.query(
     `INSERT INTO prospects
-    (name, middle_name, last_name, street, ext_number, neighborhood, zip_code, phone_number, rfc, attachment, attachment_name)
+    (name, middle_name, last_name, street, ext_number, neighborhood, zip_code, phone_number, rfc)
     VALUES
     (
     "${prospect.name.toLowerCase()}",
@@ -59,9 +59,7 @@ async function create(prospect){
     "${prospect.neighborhood.toLowerCase()}",
     "${prospect.zip_code.toLowerCase()}",
     "${prospect.phone_number.toLowerCase()}",
-    "${prospect.rfc.toLowerCase()}",
-    "${prospect.attachment}",
-    "${prospect.attachment_name}"
+    "${prospect.rfc.toLowerCase()}"
     );`
   );
   message = 'Error in creating prospect';
