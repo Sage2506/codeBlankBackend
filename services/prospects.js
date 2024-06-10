@@ -5,22 +5,34 @@ const config = require('../config');
 async function get(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
-    `SELECT id, name,
-    middle_name,
-    last_name,
-    street,
+    `SELECT
+    attachment_name,
+    attachment,
     ext_number,
+    id,
+    last_name,
+    middle_name,
+    name,
     neighborhood,
-    zip_code,
     phone_number,
     rfc,
-    attachment,
-    attachment_name
+    status,
+    street,
+    zip_code
     FROM prospects LIMIT ${offset},${config.listPerPage}`
   );
   const count = await db.query(`SELECT Count(*) as total FROM prospects;`);
-
   const data = helper.emptyOrRows(rows);
+
+  for (const prospect of data) {
+    const foreignRows = await db.query(
+      `SELECT id, name FROM files WHERE prospect_id =${prospect.id};`
+    )
+    const files = helper.emptyOrRows(foreignRows);
+    if(foreignRows.length > 0) {
+      prospect['files']= files;
+    }
+  }
   const meta = {
     currentPage: parseInt(page),
     count : count[0].total,
@@ -34,7 +46,6 @@ async function get(page = 1) {
 }
 
 async function create(prospect){
-
   const result = await db.query(
     `INSERT INTO prospects
     (name, middle_name, last_name, street, ext_number, neighborhood, zip_code, phone_number, rfc, attachment, attachment_name)
@@ -53,9 +64,6 @@ async function create(prospect){
     "${prospect.attachment_name}"
     );`
   );
-
-
-  console.log("data id: ",result);
   message = 'Error in creating prospect';
 
   if (result.affectedRows) {
@@ -67,19 +75,8 @@ async function create(prospect){
 
 async function update(id, prospect){
   const result = await db.query(
-    `UPDATE prospects SET
-    name="${prospect.name.toLowerCase()}",
-    middle_name="${prospect.middle_name.toLowerCase()}",
-    last_name="${prospect.last_name.toLowerCase()}",
-    street="${prospect.street.toLowerCase()}",
-    ext_number="${prospect.ext_number.toLowerCase()}",
-    neighborhood="${prospect.neighborhood.toLowerCase()}",
-    zip_code="${prospect.zip_code.toLowerCase()}",
-    phone_number="${prospect.phone_number.toLowerCase()}",
-    rfc="${prospect.rfc.toLowerCase()}"
-    WHERE id=${id}`
+    `UPDATE prospects SET status=${prospect.status} WHERE id=${id}`
   );
-
   let message = 'Error in updating prospect';
 
   if (result.affectedRows) {
