@@ -6,8 +6,6 @@ async function get(page = 1) {
   const offset = helper.getOffset(page, config.listPerPage);
   const rows = await db.query(
     `SELECT
-    attachment_name,
-    attachment,
     ext_number,
     id,
     last_name,
@@ -15,6 +13,7 @@ async function get(page = 1) {
     name,
     neighborhood,
     phone_number,
+    rejection_reason,
     rfc,
     status,
     street,
@@ -73,7 +72,7 @@ async function create(prospect){
 
 async function update(id, prospect){
   const result = await db.query(
-    `UPDATE prospects SET status=${prospect.status} WHERE id=${id}`
+    `UPDATE prospects SET status=${prospect.status}, rejection_reason ="${prospect.rejection_reason}" WHERE id=${id};`
   );
   let message = 'Error in updating prospect';
 
