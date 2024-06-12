@@ -1,0 +1,27 @@
+CREATE DATABASE IF NOT EXISTS code_blank;
+
+USE code_blank;
+
+CREATE TABLE IF NOT EXISTS `code_blank`.`prospects` (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(150) NOT NULL,
+    middle_name VARCHAR(150) NOT NULL,
+    last_name VARCHAR(150),
+    street VARCHAR(150) NOT NULL,
+    ext_number VARCHAR(8) NOT NULL,
+    neighborhood VARCHAR(150) NOT NULL,
+    zip_code VARCHAR(10) NOT NULL,
+    phone_number VARCHAR(10) NOT NULL,
+    rejection_reason VARCHAR(150) NOT NULL DEFAULT "",
+    rfc VARCHAR(13) NOT NULL,
+    status TINYINT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS `code_blank`.`files` (
+  id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(150) NOT NULL,
+  prospect_id BIGINT UNSIGNED,
+  FOREIGN KEY (prospect_id) REFERENCES prospects(id)
+);
